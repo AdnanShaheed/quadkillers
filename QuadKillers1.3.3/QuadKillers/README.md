@@ -8,6 +8,7 @@ Make sure you open up this specific sub-folder as the root of your vscode worksp
 2. ctrl+shift+p --> create task file
 3. (For windows) Add processing to your path variable in windows
     - Open the processing-#.#.# folder
+        - You may have to copy the processing-#.#.#/processing-java.exe instead
     - Copy the java executable file as a path
     - settings -> edit environment variables -> edit PATH -> add the processing file directory you copied
     - restart vscode
