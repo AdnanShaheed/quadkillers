@@ -24,7 +24,7 @@ class Player extends GameObject {
 
   private float lastSlash; //at what time did the last slash start
   private float slashCooldown = 500; //cooldown between slashes
-  private float dashSlashBuffer = 100; //a dash slash will still register a short amount of time after the dash finishes
+  private float dashSlashBuffer = 500; //a dash slash will still register a short amount of time after the dash finishes
   private boolean flipSlash = false; //boolean used to alternate the swing direction of the dash
 
   private float lastSpell; //at what time was last shot fired
