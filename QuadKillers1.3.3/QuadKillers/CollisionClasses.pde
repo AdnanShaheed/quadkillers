@@ -1,12 +1,19 @@
+
 /*This file stores all the classes required to detect various collisions.
  This file was written before the game project as a general use collision library, so many functiosn are not used. */
+ 
+//poor man's enum
+final int BOX_TYPE = 0;
+final int LINE_TYPE = 1;
+final int CIRCLE_TYPE = 2;
+final int GROUP_TYPE = 3;
 
 abstract class Collider { //inherited class for all the collider types
   //Polymorphism: The subclasses will override the return value of this function
   //0 for box, 1 for line, 2 for circle, 3 for group
 
   /*setValues is a "fake" constructor that has the same ability.
-   *This overcomes the limitation that you can only call constructors in other constructors
+   *This overcomes the limitation that you can only call 2constructors in other constructors
    * i.e. you can only use this() in other constructors, however i can use setValues() instead */
   abstract int getType();
   abstract void setPos(float x, float y);
@@ -25,14 +32,14 @@ boolean testColl(Collider a, Collider b) {
   }
   int aType = a.getType();
   int bType = b.getType();
-  if (a.getType()==3) { //if groupColl
+  if (a.getType()==GROUP_TYPE) { //if groupColl
     for (Collider c : ((GroupColl)a).colls) {
       if (testColl(c, b)) {
         return true;
       }
     }
     return false;
-  } else if (b.getType()==3) {
+  } else if (b.getType()==GROUP_TYPE) {
     for (Collider c : ((GroupColl)b).colls) {
       if (testColl(a, c)) {
         return true;
@@ -40,50 +47,50 @@ boolean testColl(Collider a, Collider b) {
     }
     return false;
   } else {
-    boolean coll = false;
+    boolean isColliding = false;
     //large switch case chooses the correct collision detection function based on the type of collider
     switch(aType) {
-    case 0:
+    case BOX_TYPE:
       switch(bType) {
-      case 0:
-        coll = BoxBoxColl((BoxColl)a, (BoxColl)b);
+      case BOX_TYPE:
+        isColliding = BoxBoxColl((BoxColl)a, (BoxColl)b);
         break;
-      case 1:
-        coll = BoxLineColl((BoxColl)a, (LineColl)b);
+      case LINE_TYPE:
+        isColliding = BoxLineColl((BoxColl)a, (LineColl)b);
         break;
-      case 2:
-        coll = BoxCircleColl((BoxColl)a, (CircleColl)b);
+      case CIRCLE_TYPE:
+        isColliding = BoxCircleColl((BoxColl)a, (CircleColl)b);
         break;
       }
       break;
-    case 1:
+    case LINE_TYPE:
       switch(bType) {
-      case 0:
-        coll = LineBoxColl((LineColl)a, (BoxColl)b);
+      case BOX_TYPE:
+        isColliding = LineBoxColl((LineColl)a, (BoxColl)b);
         break;
-      case 1:
-        coll = LineLineColl((LineColl)a, (LineColl)b);
+      case LINE_TYPE:
+        isColliding = LineLineColl((LineColl)a, (LineColl)b);
         break;
-      case 2:
-        coll = LineCircleColl((LineColl)a, (CircleColl)b);
+      case CIRCLE_TYPE:
+        isColliding = LineCircleColl((LineColl)a, (CircleColl)b);
         break;
       }
       break;
-    case 2:
+    case CIRCLE_TYPE:
       switch(bType) {
-      case 0:
-        coll = CircleBoxColl((CircleColl)a, (BoxColl)b);
+      case BOX_TYPE:
+        isColliding = CircleBoxColl((CircleColl)a, (BoxColl)b);
         break;
-      case 1:
-        coll = CircleLineColl((CircleColl)a, (LineColl)b);
+      case LINE_TYPE:
+        isColliding = CircleLineColl((CircleColl)a, (LineColl)b);
         break;
-      case 2:
-        coll = CircleCircleColl((CircleColl)a, (CircleColl)b);
+      case CIRCLE_TYPE:
+        isColliding = CircleCircleColl((CircleColl)a, (CircleColl)b);
         break;
       }
       break;
     }
-    return coll;
+    return isColliding;
   }
 }
 
@@ -116,14 +123,14 @@ class GroupColl extends Collider {
 }
 
 class BoxColl extends Collider {
-  PVector p1 = new PVector(); //upper left corner (-x, -y)
-  PVector p2 = new PVector(); //bottom right corner (+x, +y)
-  PVector center = new PVector(); //center of the box
-  PVector size = new PVector(); //.x is width, .y is height
+  private PVector p1 = new PVector(); //upper left corner (-x, -y)
+  private PVector p2 = new PVector(); //bottom right corner (+x, +y)
+  private PVector center = new PVector(); //center of the box
+  private PVector size = new PVector(); //.x is width, .y is height
 
   @Override
     int getType() {
-    return 0;
+    return BOX_TYPE;
   }
   BoxColl() {
   }
@@ -132,6 +139,7 @@ class BoxColl extends Collider {
   }
 
   void setValues(float a, float b, float c, float d, int mode) {
+    //mode is processing's built in rect mode
     switch (mode) {
       case (int)CORNER:
       p1.set(a, b);
@@ -183,13 +191,13 @@ class BoxColl extends Collider {
 }
 
 class LineColl extends Collider {
-  PVector p1 = new PVector();
-  PVector p2 = new PVector();
-  BoxColl boundingBox = new BoxColl(); //create reference instead of creating new box object every frame
+  private PVector p1 = new PVector();
+  private PVector p2 = new PVector();
+  private BoxColl boundingBox = new BoxColl(); //create reference instead of creating new box object every frame
 
   @Override
     int getType() {
-    return 1;
+    return LINE_TYPE;
   }
   LineColl() {
   }
@@ -228,13 +236,13 @@ class LineColl extends Collider {
 }
 
 class CircleColl extends Collider {
-  PVector center = new PVector(); //center of circle
-  float radius; //radius of circle
-  BoxColl boundingBox = new BoxColl(); //create reference instead of creating new box object every frame
+  private PVector center = new PVector(); //center of circle
+  private float radius; //radius of circle
+  private BoxColl boundingBox = new BoxColl(); //create reference instead of creating new box object every frame
 
   @Override
     int getType() {
-    return 2;
+    return CIRCLE_TYPE;
   }
   CircleColl() {
   }
