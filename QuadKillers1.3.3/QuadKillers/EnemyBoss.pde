@@ -94,9 +94,9 @@ class BulletBoss extends Enemy {
     for (int i=0; i<12; i++) {
       float angle = rot+map(i, 0, 12, 0, TAU);
       if (floor(random(1,3))==1) {
-        objs.add(new EnemyBullet( pos.copy().add(PVector.fromAngle(angle).setMag(120 * scale)), PVector.fromAngle(angle).setMag(5)));
+        objs.add(new Rocket( pos.copy().add(PVector.fromAngle(angle).setMag(120 * scale)), PVector.fromAngle(angle).setMag(5)));
       } else {
-        objs.add(new InvincBullet( pos.copy().add(PVector.fromAngle(angle).setMag(120 * scale)), PVector.fromAngle(angle).setMag(5)));
+        objs.add(new Rocket( pos.copy().add(PVector.fromAngle(angle).setMag(120 * scale)), PVector.fromAngle(angle).setMag(5)));
       }
     }
   }

@@ -181,8 +181,10 @@ class Player extends GameObject {
             //Code for explosions
           } else if (inputHeld[7] && inputPressTime[7] > lastDash + dashDuration && inputPressTime[7] < lastDash + dashDuration + dashSlashBuffer && millis < lastDash + dashDuration + dashSlashBuffer) {
             //Dash Explosion
-            objs.add(new PlayerSmash(player.pos.copy(), 400, 1000, color(180, 1, 1)));
-            objs.get(objs.size()-1).type[4]=true;
+            for (int i=0; i<8; i++) {
+              objs.add(new PlayerSmash(player.pos.copy().add(PVector.random2D().mult(500)), 400, 1000, color(180, 1, 1)));
+              objs.get(objs.size()-1).type[4]=true;
+            }
             screenShake.add(50*cos(mouseDir), 50*sin(mouseDir));
             bgHue = 180; //Screen flash
             bgBrightness = 0.5;

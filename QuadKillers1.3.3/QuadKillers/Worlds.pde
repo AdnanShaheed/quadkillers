@@ -112,7 +112,7 @@ class RedWorld extends World {
     rectMode(CENTER);
     ellipseMode(CENTER);
     noStroke();
-    for (int i=0; i<10; i++) { //create background particle
+    for (int i=0; i<10; i++) { //create background particlew
       fill(random(0, 45), 1, 1, 0.2);
       shapes.add(new Shape(createShape(ELLIPSE, 0, 0, 50, 50), new PVector(50, 50), random(0.5, 1.5), 0) );
       fill(0, 0, random(0.7, 0.1), 0.2);
@@ -325,6 +325,7 @@ class TestWorld extends World {
     bgObjs.clear();
     textParticles.clear();
     objs.add(new BulletBoss(500, 500));
+    objs.add(new BulletBoss(-500, 500));
   }
   @Override
     void enemySpawn () {
@@ -332,6 +333,7 @@ class TestWorld extends World {
   @Override
     void setWorld() {
     initBulletBossSprite(2);
+    initRocketSprite();
     shapes.clear();
     for (int i=0; i<20; i++) { //create background particle
       fill(random(0, 360), 1, 1, 0.2);
