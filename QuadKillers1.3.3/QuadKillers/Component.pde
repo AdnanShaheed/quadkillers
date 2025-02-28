@@ -1,210 +1,206 @@
-import java.util.function.Consumer;
-
 public class ComponentInfo {
-    float millis; //millis at the time this function is called
-    float dt; //deltatime scale factor
-    public ComponentInfo(ComponentInfo info) {
-        this.millis = millis;
-        this.dt = dt;
-    }
+  float millis; //millis at the time this function is called
+  float dt; //deltatime scale factor
+  public ComponentInfo(float millis, float dt) {
+    this.millis = millis;
+    this.dt = dt;
+  }
 }
 
-abstract class ComponentBase {
-    ComponentBase parent;
-    public ArrayList<ComponentBase> children = new ArrayList<ComponentBase>();
+public class ComponentBase {
+  ComponentBase parent;
+  public ArrayList<ComponentBase> children = new ArrayList<ComponentBase>();
 
-    public Consumer<ComponentInfo> startFunc = null;
-    public Consumer<ComponentInfo> updateFunc = null;
-    public Consumer<ComponentInfo> onDeleteFunc = null;
+  public Consumer<ComponentInfo> startFunc = null;
+  public Consumer<ComponentInfo> updateFunc = null;
+  public Consumer<ComponentInfo> onDeleteFunc = null;
 
-    public ComponentBase() {}
+  public boolean isFinished = false;
 
-    //used for quick component creation
-    public ComponentBase(
-        Consumer<ComponentInfo> startFunc,
-        Consumer<ComponentInfo> updateFunc,
-        Consumer<ComponentInfo> onDeleteFunc
+  public ComponentBase() {
+  }
+  //used for quick component creation
+  public ComponentBase(
+    Consumer<ComponentInfo> startFunc,
+    Consumer<ComponentInfo> updateFunc,
+    Consumer<ComponentInfo> onDeleteFunc
     ) {
-        this.startFunc = startFunc;
-        this.updateFunc = updateFunc;
-        this.onDeleteFunc = onDeleteFunc;
-    }
+    this.startFunc = startFunc;
+    this.updateFunc = updateFunc;
+    this.onDeleteFunc = onDeleteFunc;
+  }
 
-    //called once when the component starts
-    public ComponentBase start(ComponentInfo info) {
-        if (startFunc != null) startFunc.accept(info);
-        return this;
-    }
-    //called every tick
-    public ComponentBase update(ComponentInfo info) {
-        if (updateFunc != null) updateFunc.accept(info);
-        return this;
-    }
-    //when the component is deleted
-    public ComponentBase onDelete(ComponentInfo info) {
-        if (onDeleteFunc != null) onDeleteFunc.accept(info);
-        return this;
-    }
+  //called once when the component starts
+  public void start(ComponentInfo info) {
+    if (startFunc != null) startFunc.accept(info);
+  }
+  //called every tick
+  public void update(ComponentInfo info) {
+    if (updateFunc != null) updateFunc.accept(info);
+  }
+  //when the component is deleted
+  public void onDelete(ComponentInfo info) {
+    if (onDeleteFunc != null) onDeleteFunc.accept(info);
+  }
 
-    //Call this function to stop/finish the command.
-    public void delete() {
-        disconnectParent();
-        for (ComponentBase child : children) {
-            child.delete();
-        }
+  //Call this function to stop/finish the command.
+  public void delete() {
+    isFinished = true;
+    disconnectParent();
+    for (ComponentBase child : children) {
+      child.delete();
     }
-
-    public ComponentBase addChild(ComponentBase child) {
-        this.children.add(child);
-        child.parent = this;
-        return this;
-    }
-
-    // public ComponentBase addChildren(ComponentBase[] newChildren) {
-    //     this.children.addAll(newChildren);
-    //     for (ComponentBase child : newChildren) {
-    //         child.parent = this;
-    //     }
-    //     return this;
-    // }
-    public ComponentBase addParent(ComponentBase parent) {
-        this.parent = parent;
-        parent.children.add(this);
-        return this;
-    }
-    //removes child connection without deleting the child
-    public ComponentBase disconnectChild(ComponentBase child) {
-        this.children.remove(child);
-        child.parent = null;
-        return this;
-    }
-    //removes parent connection without deleting self
-    public ComponentBase disconnectParent() {
-        this.parent.children.remove(this);
-        this.parent = null;
-        return this;
-    }
-    public ComponentBase andThen(ComponentBase nextComponent) {
-        return new SequentialCommandGroup( new ComponentBase[]{this, nextComponent} );
-    }
-    public ComponentBase alongWith(ComponentBase nextComponent) {
-        return new ParallelComponentGroup( new ComponentBase[]{this, nextComponent} );
-    }
+  }
+  public void addChild(ComponentBase child) {
+    this.children.add(child);
+    child.parent = this;
+  }
+  public void addParent(ComponentBase parent) {
+    this.parent = parent;
+    parent.children.add(this);
+  }
+  //removes child connection without deleting the child
+  public void disconnectChild(ComponentBase child) {
+    this.children.remove(child);
+    child.parent = null;
+  }
+  //removes parent connection without deleting self
+  public void disconnectParent() {
+    this.parent.children.remove(this);
+    this.parent = null;
+  }
+  public SequentialComponent andThen(ComponentBase nextComponent) {
+    return new SequentialComponent( new ComponentBase[]{this, nextComponent} );
+  }
+  public ParallelComponent alongWith(ComponentBase nextComponent) {
+    return new ParallelComponent( new ComponentBase[]{this, nextComponent} );
+  }
 }
 
 //Every component in this group is run at the same time (used most commonly)
-class ParallelComponentGroup extends ComponentBase {
-    public ParallelComponentGroup() {}
-    public ParallelComponentGroup(ComponentBase[] components) {
-        children = new ArrayList(components.length);
-        for (int i=0; i<components.length; i++) {
-            children.add(components[i]);
-        }
+public class ParallelComponent extends ComponentBase {
+  public ParallelComponent() {
+  }
+  public ParallelComponent(ComponentBase[] components) {
+    children = new ArrayList(components.length);
+    for (int i=0; i<components.length; i++) {
+      children.add(components[i]);
     }
+  }
 
-    public ParallelComponentGroup(ComponentInfo info) {
-        this.start(info);
+  public ParallelComponent(ComponentInfo info) {
+    this.start(info);
+  }
+  @Override
+  public void start(ComponentInfo info) {
+    for (ComponentBase c : children) {
+      c.start(info);
     }
-    @Override
-    public ComponentBase start(ComponentInfo info) {
-        for (ComponentBase c : children) {
-            c.start(info);
-        }
-        return this;
+  }
+  @Override
+  public void update(ComponentInfo info) {
+    for (ComponentBase c : children) {
+      c.update(info);
     }
-    @Override
-    public ComponentBase update(ComponentInfo info) {
-        for (ComponentBase c : children) {
-            c.update(info);
-        }
-        return this;
-    }
-    @Override
-    public ComponentBase onDelete(ComponentInfo info) {
-        for (ComponentBase c : children) {
-            c.onDelete(info);
-        }
-        return this;
-    }
+  }
 }
 
 //When a command onDeletes, it startializes the next command in the sequence
-class SequentialCommandGroup extends ComponentBase {
-    //temporary inefficient implementation of queue
-    public SequentialCommandGroup() {}
-    public SequentialCommandGroup(ComponentBase[] components) {
-        children = new ArrayList(components.length);
-        for (int i=0; i<components.length; i++) {
-            children.add(components[i]);
-        }
-    }
+public class SequentialComponent extends ComponentBase {
+  //when true, the sequential command group will try to start the next component on the next update tick
+  private boolean shouldStartNext = false;
+  private ComponentBase currentComponent = null;
 
-    ComponentBase currentComponent;
-    @Override
-    public ComponentBase start(ComponentInfo info) {
-        currentComponent = children.get(0);
-        return this;
+  //temporary inefficient implementation of queue
+  public SequentialComponent() {
+  }
+  public SequentialComponent(ComponentBase[] components) {
+    children = new ArrayList(components.length);
+    for (int i=0; i<components.length; i++) {
+      children.add(components[i]);
     }
-    @Override
-    public ComponentBase disconnectChild(ComponentBase child) {
-        return this;
+  }
+  private void startNext(ComponentInfo info) {
+    currentComponent = children.get(0);
+    currentComponent.start(info);
+  }
+  @Override
+  public void start(ComponentInfo info) {
+    startNext(info);
+  }
+  @Override
+  public void update(ComponentInfo info) {
+    if (shouldStartNext) {
+      startNext(info);
+      shouldStartNext = false;
+    } else {
+      currentComponent.update(info);
     }
+  }
+  //whenever a command terminates naturally, it will call the disconnectChild function. This causes the sequential command group to go to the next command.
+  @Override
+  public void disconnectChild(ComponentBase child) {
+    int index = children.indexOf(child);
+    if (index == 0) {
+      shouldStartNext = true;
+    } else {
+      children.remove(index);
+    }
+  }
 }
- 
+
+//constants for deltatime calculations
+final float DT_MAX = 2;
+final float DT_MIN = 0;
+final float BASE_TICK_RATE = 60;
+//float mspt: How many milliseconds have passed in the same tick
+float calcDeltaTime(float mspt) {
+  if (mspt < 0) println("calcDeltaTime error: the mspt paramater passed into this function should not be a negative number");
+  return constrain(BASE_TICK_RATE*(mspt*0.001), DT_MIN, DT_MAX);
+}
+
 //updates all children at a specified tickrate "independent" of the parent
 class TimeLoopController extends ComponentBase {
-    private final float DT_MAX = 2;
-    private final float DT_MIN = 0;
-    private final float BASE_TICK_RATE = 60;
+  private float startTime;
+  private float lastTime;
+  private float mspt; //milliseconds per tick. How many milliseconds pass in one tick. 1000ms * 1second / tickrate
+  private int currentTick = 0;
+  
+  //lerp tick true: If the parent tick rate is not fast enough, this controller simulates fake in-between ticks to fill in the ones that it missed.
+  //lerp trick false: This tick rate is limited by the speed of the parent tick rate
+  //For example, if this runs at 60tps but parent is at 30tps, it will create two ticks to compensate.
+  public boolean lerpTickEnabled = true;
 
-    private float startTime;
-    private float lastTime;
-    private float mspt; //milliseconds per tick. How many milliseconds pass in one tick. 1000ms * 1second / tickrate
-    private int currentTick = 0;
-    
-    private final float calcDeltaTime(float lastTime, float currentTime) {
-        if (lastTime - currentTime < 0) print("Error you switched lastTime and currentTime");
-        return constrain(BASE_TICK_RATE*((currentTime*0.001 - lastTime)), DT_MIN, DT_MAX);
-    }
-
-    //lerp tick true: If the parent tick rate is not fast enough, this controller simulates fake in-between ticks to fill in the ones that it missed.
-    //lerp trick false: This tick rate is limited by the speed of the parent tick rate
-    //For example, if this runs at 60tps but parent is at 30tps, it will create two ticks to compensate.
-    public boolean lerpTickEnabled = false;
-
-    public TimeLoopController(float mspt) {
-        this.mspt = mspt;
-    }
-    @Override
-    public ComponentBase start(ComponentInfo info) {
-        startTime = millis;
-        return this;
-    }
-    @Override
-    public ComponentBase update(ComponentInfo info) {
-        if (lerpTickEnabled) {
-            //the amount of ticks that have to be simulated
-            int tickAmount = floor((millis - lastTime) / mspt);
-            for (int i=1; i<tickAmount; i++) {
-                float thisTickMillis = map(i, 0, tickAmount, lastTime, millis);
-                //time between ticks
-                float deltaTime = map(1, 0, 3, 0, millis - lastTime);
-                float thisTickDt = calcDeltaTime(0, deltaTime);
-                for (ComponentBase child : children) {
-                    child.update(info);
-                }
-            }
-            if (tickAmount > 0) lastTime = millis;
-        } else if (millis - lastTime > mspt) {
-            //deltatime is 
-            float thisTickDt = calcDeltaTime(lastTime, millis);
-
-            for (ComponentBase child : children) {
-                child.update(info);
-            }
-            lastTime = millis;
+  public TimeLoopController(float tickRate) {
+    this.mspt = 1000/tickRate;
+  }
+  @Override
+  public void start(ComponentInfo info) {
+    startTime = info.millis;
+  }
+  @Override
+  public void update(ComponentInfo info) {
+    if (lerpTickEnabled) {
+      //the amount of ticks that have to be simulated
+      int tickAmount = floor((info.millis - lastTime) / mspt);
+      for (int i=1; i<=tickAmount; i++) {
+        //i=0 would give the millis for lastTime, which we do not need to generate a tick for
+        //i=tickAmount generates the tick at the info.millis time
+        float thisTickMillis = map(i, 0, tickAmount, lastTime, info.millis);
+        //time between ticks
+        float thisTickDt = calcDeltaTime((info.millis - lastTime)/tickAmount);
+        for (ComponentBase child : children) {
+          child.update(new ComponentInfo(thisTickMillis, thisTickDt));
         }
+      }
+      if (tickAmount > 0) lastTime = info.millis;
+    } else if (info.millis - lastTime > mspt) {
+      float thisTickDt = calcDeltaTime(info.millis - lastTime);
 
-        return this;
+      for (ComponentBase child : children) {
+        child.update(new ComponentInfo(info.millis, thisTickDt));
+      }
+      lastTime = info.millis;
     }
+  }
 }
