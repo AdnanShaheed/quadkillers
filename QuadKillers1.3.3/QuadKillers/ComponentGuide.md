@@ -6,6 +6,11 @@ This system is not an idiot-proof design. To avoid overcomplicating the design, 
 - Whenever you extend ComponentBase, make sure you reference the original ComponentBase methods you are overriding.
 - Treat the `parents` and `children` arraylists as read only. Use the methods for removing or adding to the lists.
 - All things should be done from the perspective of the parent. (For example, the `disconnectParent` method goes to the parent object and calls `disconnectChild`)
+- The constructor is for setting up the object. The constructor DOES NOT START THE COMMAND. That's what INIT is for.
 
 ## Extending Command Base
-```
+
+
+
+## ToDo:
+Fix the class architecture. Atm, it's impossible call ParallelComponentGroup constructor inside ComponentBase
