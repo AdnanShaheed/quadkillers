@@ -51,7 +51,7 @@ class BulletBoss extends Enemy {
     coll = new CircleColl(pos.x, pos.y, 120*scale);
     health = 200;
     maxHealth = 200;
-    enemyCount --; //doesn't count towards enemy wave spawning
+    //enemyCount --; //doesn't count towards enemy wave spawning
     targetScale = 1.5;
     
     bgObjs.add(new PullVisual(this)); //temporary add pull effect

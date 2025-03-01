@@ -40,9 +40,7 @@ void setup() {
   surface.setResizable(true);
   m = new Minim(this);
   bgm = m.loadFile("GameTrack.mp3");
-  bgm.loop();
-  //bgMusic = new SoundFile(this, "DieAlone.mp3");
-  //bgMusic.loop();
+  //bgm.loop();
   for (int i=0; i<frameLength; i++) { //code for preloading the slash animation
     slashFrame[i] = calcSlash((float)(i+1)/frameLength);
   }

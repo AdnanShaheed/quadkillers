@@ -11,7 +11,7 @@ void initWorlds () {
 abstract class World {
   String worldType;
   void difficulty () {
-  if (gameMode == "nohit") {
+    if (gameMode == "nohit") {
       player.health = 10;
       player.maxHealth = 100;
     }
@@ -36,7 +36,7 @@ class RedWorld extends World {
   @Override
     void gameStart() {
     player = new Player(0, 0);
-    
+
     camPos.set(0, 0);
     enemyCount = 0;
     objectCount = 0;
@@ -131,7 +131,7 @@ class WhiteWorld extends World {
     camPos.set(0, 0);
     enemyCount = 0;
     objectCount = 0;
-    wave=15;
+    wave=14;
     killCount =0;
     magic=0;
     lastSpawn = millis + 3000;
@@ -151,6 +151,19 @@ class WhiteWorld extends World {
       lastSpawn = millis;
       if (round(random(1, 5))==1) {
         objs.add(new NeutralExplosion(player.pos.copy(), 400, 1500));
+      }
+      if (subWave%15==0) { //check every 15 waves to spawn a boss, skip enemy logic
+        switch (subWave/15) {
+        case 1:
+          float angle = random(0, TAU);
+          objs.add(new BulletBoss(player.pos.x + 500*cos(angle), player.pos.y + 500*sin(angle)));
+          break;
+        case 2:
+          break;
+        }
+
+        subWave=0;
+        return;
       }
       if (subWave>0) {
         int mod = subWave%20+1; //temp variable to store the mod of subWave
@@ -194,6 +207,7 @@ class WhiteWorld extends World {
   }
   @Override
     void setWorld() {
+    initBulletBossSprite(2);
     initBasicEnemySprite();
     initRangeEnemySprite();
     initRocketEnemySprite();
@@ -220,7 +234,7 @@ class PurpleWorld extends World {
   @Override
     void gameStart() {
     player = new Player(0, 0);
-    
+
     camPos.set(0, 0);
     enemyCount = 0;
     objectCount = 0;
