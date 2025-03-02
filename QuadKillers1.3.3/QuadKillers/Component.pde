@@ -1,3 +1,5 @@
+import java.util.function.Consumer
+
 public class ComponentInfo {
   float millis; //millis at the time this function is called
   float dt; //deltatime scale factor
@@ -15,7 +17,7 @@ public class ComponentBase {
   public Consumer<ComponentInfo> updateFunc = null;
   public Consumer<ComponentInfo> onDeleteFunc = null;
 
-  public boolean isFinished = false;
+  public boolean isDeleted = false;
 
   public ComponentBase() {
   }
@@ -44,11 +46,11 @@ public class ComponentBase {
   }
 
   //Call this function to stop/finish the command.
-  public void delete() {
-    isFinished = true;
+  public void delete(ComponentInfo info) {
+    isDeleted = true;
     disconnectParent();
     for (ComponentBase child : children) {
-      child.delete();
+      child.delete(info);
     }
   }
   public void addChild(ComponentBase child) {
