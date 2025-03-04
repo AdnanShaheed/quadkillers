@@ -176,6 +176,10 @@ class TimeLoopController extends ComponentBase {
   public TimeLoopController(float tickRate) {
     this.mspt = 1000/tickRate;
   }
+  public TimeLoopController(float tickRate, ComponentBase component) {
+    this.mspt = 1000/tickRate;
+    addChild(component);
+  }
   @Override
   public void start(ComponentInfo info) {
     startTime = info.millis;
