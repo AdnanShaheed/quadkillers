@@ -139,11 +139,11 @@ void gameLoop() {
   PVector avgPos = new PVector(0, 0);
   float avgCount = 0; //This iss the total n count used for calculating the average position
   for (GameObject obj : objs) {
-    if (obj.type[8] /*boss*/) {
+    if (obj.typeBoss /*boss*/) {
       //weight boss position by factor of 20
       avgPos.add(obj.pos.copy().mult(20));
       avgCount+=20;
-    } else if (obj.type[0]) { //if the object is an enemy
+    } else if (obj.typeEnemy) { //if the object is an enemy
       avgPos.add(obj.pos);
       avgCount++;
     } else {
@@ -346,7 +346,7 @@ void tutorialLoop() {
   } else if (tutorialStep==3) {
     text("attack right after a dash for a combo", 0, 0);
     for (GameObject obj : objs) {
-      if (obj.type[4] == true) {
+      if (obj.typePlayerDashAttack == true) {
         tutorialStep=4;
       }
     }

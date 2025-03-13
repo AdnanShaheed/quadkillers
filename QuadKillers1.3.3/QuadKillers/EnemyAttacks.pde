@@ -15,7 +15,7 @@ class NeutralExplosion extends GameObject {
   @Override
     void init() {
     startTime = millis;
-    type[7] = true; //neutral explosion type
+    typeNeutralExplosion = true; //neutral explosion type
   }
   @Override
     void collUpdate() {
@@ -133,7 +133,7 @@ class InvincBullet extends EnemyBullet {
   }
   @Override
   void slashHit(GameObject obj) {
-    if (obj.type[4] /*dash slash*/) {
+    if (obj.typePlayerDashAttack /*dash slash*/) {
       vel.add(mousePos.copy().sub(player.pos).setMag(30)); //instantaneous
     } else {
       screenShake.add(PVector.sub(mousePos,player.pos).setMag(20));
@@ -197,9 +197,9 @@ class Rocket extends Enemy {
     void init() {
     coll = new CircleColl(pos.x, pos.y, 25);
     mode = "fly";
-    type[0] = false;
+    typeEnemy = false;
     enemyCount--; //In the parent Enemy class, it adds enemyCount by 1, so this line removes that
-    type[6] = true; //type rocket
+    typeRocket = true; //type rocket
     calcSeparate[6] = true; //repel rockets
   }
   @Override
@@ -210,7 +210,7 @@ class Rocket extends Enemy {
     void slashHit(GameObject obj) {
     startTime = millis; //with fuse
     mode = "fuse";
-    if (obj.type[4]) { //dash slash code
+    if (obj.typePlayerDashAttack) { //dash slash code
       vel.add(mousePos.copy().sub(player.pos).setMag(75)); //instantaneous
     } else {//regular slash code
       vel.add(mousePos.copy().sub(player.pos).setMag(50)); //instantaneous

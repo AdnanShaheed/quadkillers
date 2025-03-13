@@ -45,8 +45,8 @@ class BulletBoss extends Enemy {
   }
   @Override
     void init() {
-    type[0] = true; //type enemy
-    type[8] = true; //type boss
+    typeEnemy = true; //type enemy
+    typeBoss = true; //type boss
     //no separation
     coll = new CircleColl(pos.x, pos.y, 120*scale);
     health = 200;

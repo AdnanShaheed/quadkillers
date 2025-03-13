@@ -51,19 +51,19 @@ class Enemy extends GameObject {
         }
       }
 
-      if (obj.type[1] /*type pAttack*/) {
-        if (obj.type[2]/*pSlash*/&& testColl(obj.coll, coll) && deltaPos.copy().mult(-1).dot(mousePos.copy().sub(player.pos)) > 0) {
+      if (obj.typePlayerAttack /*type pAttack*/) {
+        if (obj.tPlayerSlash/*pSlash*/&& testColl(obj.coll, coll) && deltaPos.copy().mult(-1).dot(mousePos.copy().sub(player.pos)) > 0) {
           slashHit(obj);
-        } else if (mode != "stun" && obj.type[3]/*pFireball*/ && testColl(obj.coll, coll)) {
+        } else if (mode != "stun" && obj.typePlayerFireball/*pFireball*/ && testColl(obj.coll, coll)) {
           fireballHit(obj);
-        } else if (obj.type[5]/*pExplosion*/ && testColl(coll, obj.coll)) {
+        } else if (obj.typePlayerSmash/*pExplosion*/ && testColl(coll, obj.coll)) {
           smashHit(obj);
-        } else if (obj.type[9]/*pExplosion*/ && testColl(coll, obj.coll)) {
+        } else if (obj.typePushAttack/*pExplosion*/ && testColl(coll, obj.coll)) {
           pushHit(obj);
         }else { //skip uneeded objects
           continue;
         }
-      } else if (obj.type[7] /*neutral explosion*/ && testColl(coll, obj.coll)) {
+      } else if (obj.typeNeutralExplosion /*neutral explosion*/ && testColl(coll, obj.coll)) {
         explodeHit(obj);
       } else {
         continue;
@@ -102,7 +102,7 @@ class Enemy extends GameObject {
     if (magicInf) {
       magic = constrain(magic +1, 0, 32+(wave/2));
     } else magic = constrain(magic +1, 0, 32);
-    if (obj.type[4]) { //dash slash code
+    if (obj.typePlayerDashAttack) { //dash slash code
       vel.add(mousePos.copy().sub(player.pos).setMag(75)); //instantaneous
       screenShake.add(mousePos.copy().sub(player.pos).setMag(20*camScale));
       health = constrain(health-20, 0, health);
@@ -117,7 +117,7 @@ class Enemy extends GameObject {
   void fireballHit(GameObject obj) { //player fireball
     mode = "stun";
     lastStun = millis;
-    if (obj.type[4]/*pDashType*/) { //dashed pFireball
+    if (obj.typePlayerDashAttack/*pDashType*/) { //dashed pFireball
       health = constrain(health-30, 0, health);
       textParticles.add( new TextParticle("-30", random(500, 1000), pos.copy().add(random(-25, 25), random(-25, 25)), color(180, 1, 1)) );
       vel.add(obj.vel.copy().setMag(50)); //instantaneous
@@ -132,7 +132,7 @@ class Enemy extends GameObject {
   void smashHit(GameObject obj) { //player smash
     mode = "stun";
     lastStun = millis;
-    if (obj.type[4]/*pDashType*/) { //Dash Explosion
+    if (obj.typePlayerDashAttack/*pDashType*/) { //Dash Explosion
       health = constrain(health-30, 0, health);
       textParticles.add( new TextParticle("-30", random(500, 1000), pos.copy().add(random(-25, 25), random(-25, 25)), color(180, 1, 1)) );
       vel.sub(obj.pos.copy().sub(pos).setMag(50));
@@ -146,7 +146,7 @@ class Enemy extends GameObject {
   }
   void pushHit(GameObject obj) {
     mode = "stun";
-    if (obj.type[4]/*pDashType*/) { //Dash Explosion
+    if (obj.typePlayerDashAttack/*pDashType*/) { //Dash Explosion
       vel.mult(3).sub(obj.pos.copy().sub(pos).setMag(75));
       screenShake.add(mousePos.copy().sub(player.pos).setMag(20*camScale));
     } else { //Regular explosion
@@ -214,7 +214,7 @@ class BasicEnemy extends Enemy {
     health = 50;
     coll = new CircleColl(pos.x, pos.y, 25);
     lastTeleport = millis;
-    type[0] = true; //set enemy type
+    typeEnemy = true; //set enemy type
     calcSeparate[0] = true; //separate from enemy types
 
     ellipseMode(CENTER);
@@ -285,7 +285,7 @@ class RangeEnemy extends Enemy {
     void init() {
     coll = new CircleColl(pos.x, pos.y, 25); //radius not diameter
     lastShoot = millis;
-    type[0] = true; //set enemy type to true
+    typeEnemy = true; //set enemy type to true
     calcSeparate[0] = true; //set enemy separate to true
 
     //draw spawn particle
@@ -400,7 +400,7 @@ class EnemyHealer extends RangeEnemy {
   @Override
     void shoot() {
     for (GameObject obj : objs) { //heal all enemies within radius 400 pixels
-      if (obj.type[0] /*type is enemy*/ && testColl(new CircleColl(pos.x, pos.y, 300), obj.coll)) {
+      if (obj.typeEnemy /*type is enemy*/ && testColl(new CircleColl(pos.x, pos.y, 300), obj.coll)) {
         Enemy enemyObj = (Enemy)obj;
         if (enemyObj.health < enemyObj.maxHealth) {
           textParticles.add( new TextParticle("+10", random(500, 1000), enemyObj.pos.copy().add(random(-25, 25), random(-25, 25)), color(120, 1, 1)) );

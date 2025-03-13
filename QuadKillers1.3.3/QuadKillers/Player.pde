@@ -151,7 +151,7 @@ class Player extends GameObject {
           //Dash slash if mouse input was between dash ending and dashSlashBuffer
           objs.add(new PlayerSlash(player.pos, mouseDir, 300, 100, 1000, color(180, 1, 1), flipSlash));
           //origin player, aim towards mouse, radius 300, 100 ms slash animation, long fade (1sec), light blue color
-          objs.get(objs.size()-1).type[4] = true; //Set dash slash type dashAttack to true
+          objs.get(objs.size()-1).typePlayerDashAttack = true; //Set dash slash type dashAttack to true
           screenShake.add(50*cos(mouseDir), 50*sin(mouseDir));
           bgHue = 180; //Screen flash
           bgBrightness = 0.5;
@@ -171,7 +171,7 @@ class Player extends GameObject {
             //Dash projectile if mouse input was between dash ending and dashSlashBuffer
             objs.add(new PlayerFireball(player.pos.copy(), mouseDir, 150, color(180, 1, 1)));
             //origin player, aim towards mouse, radius 300, light blue color
-            objs.get(objs.size()-1).type[4] = true; //Set dash fireball type dashAttack to true
+            objs.get(objs.size()-1).typePlayerDashAttack = true; //Set dash fireball type dashAttack to true
             screenShake.add(50*cos(mouseDir), 50*sin(mouseDir));
             bgHue = 180; //Screen flash
             bgBrightness = 0.5;
@@ -182,7 +182,7 @@ class Player extends GameObject {
           } else if (inputHeld[7] && inputPressTime[7] > lastDash + dashDuration && inputPressTime[7] < lastDash + dashDuration + dashSlashBuffer && millis < lastDash + dashDuration + dashSlashBuffer) {
             //Dash Explosion
             objs.add(new PlayerSmash(player.pos.copy(), 400, 1000, color(180, 1, 1)));
-            objs.get(objs.size()-1).type[4]=true;
+            objs.get(objs.size()-1).typePlayerDashAttack=true;
             screenShake.add(50*cos(mouseDir), 50*sin(mouseDir));
             bgHue = 180; //Screen flash
             bgBrightness = 0.5;
@@ -192,7 +192,7 @@ class Player extends GameObject {
           } else if (inputHeld[6] && inputPressTime[6] > lastDash + dashDuration && inputPressTime[6] < lastDash + dashDuration + dashSlashBuffer && millis < lastDash + dashDuration + dashSlashBuffer) {
             //Dash Explosion
             objs.add(new PlayerPush(player.pos.copy(), 400, 1000, color(180, 1, 1)));
-            objs.get(objs.size()-1).type[4]=true;
+            objs.get(objs.size()-1).typePlayerDashAttack=true;
             screenShake.add(50*cos(mouseDir), 50*sin(mouseDir));
             bgHue = 180; //Screen flash
             bgBrightness = 0.5;

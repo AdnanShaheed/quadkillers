@@ -1,9 +1,4 @@
 /*classes for particles and other visual content*/
-
-color changeAlpha(color c, float alpha) { //changes the alpha value of a color
-  return color(hue(c), saturation(c), brightness(c), alpha);
-}
-
 void drawBar(float value, float start, float end) {
   drawBar(value, start, end, start, end, 10);
 }

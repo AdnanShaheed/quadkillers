@@ -61,8 +61,8 @@ class PlayerSlash extends GameObject {
   }
   @Override
     void init() {
-    type[1] = true; //pAttack
-    type[2] = true; //pSlash
+    typePlayerAttack = true; //pAttack
+    tPlayerSlash = true; //pSlash
     coll = new CircleColl(pos.x, pos.y, radius);
     startTime = millis;
   }
@@ -113,8 +113,8 @@ class PlayerFireball extends GameObject {
     startTime = millis;
     vel = PVector.fromAngle(angle).setMag(30);
     coll = new CircleColl(pos.x, pos.y, radius);
-    type[1] = true; //pAttack
-    type[3]=true; //pFireball
+    typePlayerAttack = true; //pAttack
+    typePlayerFireball=true; //pFireball
   }
   @Override
     void physUpdate() {
@@ -154,8 +154,8 @@ class PlayerSmash extends GameObject {
     void init() {
     startTime = millis;
     coll = new CircleColl(pos.x, pos.y, radius);
-    type[1] = true; //pAttack
-    type[5] = true; //playerSmash
+    typePlayerAttack = true; //pAttack
+    typePlayerSmash = true; //playerSmash
   }
   @Override
     void collUpdate() {
@@ -208,8 +208,8 @@ class PlayerPush extends GameObject {
     void init() {
     startTime = millis;
     coll = new CircleColl(pos.x, pos.y, radius);
-    type[1] = true; //pAttack
-    type[9] = true; //playerSmash
+    typePlayerAttack = true; //pAttack
+    typePushAttack = true; //playerSmash
   }
   @Override
     void collUpdate() {

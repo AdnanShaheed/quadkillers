@@ -5,13 +5,22 @@ class GameObject {
   PVector pos = new PVector(); //Position must be initialized before it can be passed as a reference
   PVector vel = new PVector();
   float scale = 1; //actual scale
-  float targetScale = 1; //used for scale lerping
   float rot = 0; //actual rotation
-  float targetRot = 0; //used for rotation lerping
   int id = 0; //unique id for the object (DOES NOT NECESSARILY MATCH LIST INDEX)
   Collider coll; //Hitbox of the object
-  boolean[] type = new boolean[10]; //layer is used to differentiate between objects (objs can have multiple layers)
+
+  //types (t prefix means type)
   //0:enemy, 1:pAttack, 2:pSlash, 3:pFireball, 4:dashAttack, 5:pSmash, 6:rocket, 7:neutralExplosion, 8:boss, 9:pushAttack
+  boolean typeEnemy;
+  boolean typePlayerAttack;
+  boolean typePlayerSlash;
+  boolean typePlayerFireball;
+  boolean typePlayerDashAttack;
+  boolean typePlayerSmash;
+  boolean typeRocket;
+  boolean typeNeutralExplosion;
+  boolean typeBoss;
+  boolean typePushAttack;
 
   GameObject() {
     id = objectCount;
