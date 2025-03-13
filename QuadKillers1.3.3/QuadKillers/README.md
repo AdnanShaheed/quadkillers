@@ -21,3 +21,6 @@ Make sure you open up this specific sub-folder as the root of your vscode worksp
 ## General Processing Guidelines
 Users should be able to run this project in regular processing, not just vscode.
 - .pde files CANNOT contain static classes (e.g. interfaces, enums, static methods/variables...)
+
+## Todo List:
+- [
