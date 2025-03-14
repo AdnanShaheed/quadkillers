@@ -1,13 +1,20 @@
 int scale = 1;
 
+class EnemyMovement {
+
+  void update() {
+
+  }
+}
+
 /*stores the code for all of the enemies*/
 class Enemy extends GameObject {
   /*Parent class for all enemies (enemy classes inherit this one)
    *stores default methods for registering player attacks (slash, smash, fireball)
    *These methods can be overrided to change mechanics reacting to different attacks
    */
-  PVector separate = new PVector(); //This vector stores the calculation that forces enemies to separate from eachother (calculated in collUpdate, used in physUpdate)
   boolean[] calcSeparate = new boolean[10]; //Whether or not to include this object type in separate calculations (same indices as type[])
+  PVector separate = new PVector(); //This vector stores the calculation that forces enemies to separate from eachother (calculated in collUpdate, used in physUpdate)
   PVector deltaPos = new PVector(); //the displacement vector between the enemy pos and the player pos
   float maxHealth = 50;
   float health = 50;
@@ -43,16 +50,16 @@ class Enemy extends GameObject {
         continue;
       }
 
-      for (int j=0; j<10; j++) {
-        if (obj.type[j] && calcSeparate[j]) {
-          if (pos.copy().sub(obj.pos).magSq() < sq(200)) {
-            separate.add(PVector.sub(pos, obj.pos));
-          }
-        }
-      }
+      // for (int j=0; j<10; j++) {
+      //   if (obj.type[j] && calcSeparate[j]) {
+      //     if (pos.copy().sub(obj.pos).magSq() < sq(200)) {
+      //       separate.add(PVector.sub(pos, obj.pos));
+      //     }
+      //   }
+      // }
 
       if (obj.typePlayerAttack /*type pAttack*/) {
-        if (obj.tPlayerSlash/*pSlash*/&& testColl(obj.coll, coll) && deltaPos.copy().mult(-1).dot(mousePos.copy().sub(player.pos)) > 0) {
+        if (obj.typePlayerSlash/*pSlash*/&& testColl(obj.coll, coll) && deltaPos.copy().mult(-1).dot(mousePos.copy().sub(player.pos)) > 0) {
           slashHit(obj);
         } else if (mode != "stun" && obj.typePlayerFireball/*pFireball*/ && testColl(obj.coll, coll)) {
           fireballHit(obj);

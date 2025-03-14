@@ -62,7 +62,7 @@ class PlayerSlash extends GameObject {
   @Override
     void init() {
     typePlayerAttack = true; //pAttack
-    tPlayerSlash = true; //pSlash
+    typePlayerSlash = true; //pSlash
     coll = new CircleColl(pos.x, pos.y, radius);
     startTime = millis;
   }

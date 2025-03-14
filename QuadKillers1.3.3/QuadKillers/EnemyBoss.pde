@@ -36,6 +36,9 @@ void initBulletBossSprite(float upScale) {
 }
 
 class BulletBoss extends Enemy {
+  private float targetScale;
+  private float targetRot;
+
   private float lastShoot;
   private float shootCooldown = 400;//1 sec
   //Bounding Box has 120 radius

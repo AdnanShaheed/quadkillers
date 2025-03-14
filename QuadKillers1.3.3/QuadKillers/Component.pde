@@ -1,4 +1,4 @@
-import java.util.function.Consumer
+import java.util.function.Consumer;
 
 public class ComponentInfo {
   float millis; //millis at the time this function is called
